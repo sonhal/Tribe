@@ -18,37 +18,52 @@ import io.ktor.jackson.*
 import io.ktor.features.*
 import io.ktor.client.*
 
+
+val oauthauthentication = "oauthauthentication"
+
 fun main(args: Array<String>): Unit = io.ktor.server.cio.EngineMain.main(args)
 
 @Suppress("unused") // Referenced in application.conf
 @kotlin.jvm.JvmOverloads
 fun Application.module(testing: Boolean = false) {
+
+
     install(Mustache) {
         mustacheFactory = DefaultMustacheFactory("templates/mustache")
     }
 
     routing {
-        get("/") {
-            call.respondText("HELLO WORLD!", contentType = ContentType.Text.Plain)
-        }
+        home()
+    }
 
-        get("/html-mustache") {
-            call.respond(MustacheContent("index.hbs", mapOf("user" to MustacheUser(1, "user1"))))
-        }
+    install(Sessions) {
+        cookie<UserSession>("t_session", storage = SessionStorageMemory())
+    }
 
-        // Static feature. Try to access `/static/ktor_logo.svg`
-        static("/static") {
-            resources("static")
-        }
+    install(Authentication) {
+        oauth(oauthauthentication) {
+            skipWhen { call -> call.sessions.get<UserSession>() != null }
 
-        get("/json/jackson") {
-            call.respond(mapOf("hello" to "world"))
+            providerLookup = {
+                loginProvider
+            }
+            client = HttpClient().apply {
+                environment.monitor.subscribe(ApplicationStopping) {
+                    close()
+                }
+            }
+            urlProvider = {redirectUrl("/login")}
         }
     }
 }
 
 data class MustacheUser(val id: Int, val name: String)
 
+data class UserSession(val id: String, val name: String, val token: String )
 
-data class MySession(val count: Int = 0)
-
+private fun ApplicationCall.redirectUrl(path: String): String {
+    val defaultPort = if (request.origin.scheme == "http") 80 else 443
+    val hostPort = request.host() + request.port().let { port -> if (port == defaultPort) "" else ":$port" }
+    val protocol = request.origin.scheme
+    return "$protocol://$hostPort$path"
+}

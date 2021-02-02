@@ -60,10 +60,9 @@ allprojects {
         implementation("io.ktor:ktor-client-core-jvm:$ktor_version")
         implementation("io.ktor:ktor-client-cio:$ktor_version")
         implementation("com.github.seratch:kotliquery:1.3.1")
+        implementation("io.github.cdimascio:dotenv-kotlin:6.2.2")
 
         testImplementation("io.ktor:ktor-server-tests:$ktor_version")
-        testImplementation("com.opentable.components:otj-pg-embedded:0.13.3")
-        testImplementation("io.mockk:mockk:1.10.0")
         testImplementation("com.opentable.components:otj-pg-embedded:0.13.3")
         testImplementation("io.mockk:mockk:1.10.0")
         testImplementation("org.junit.jupiter:junit-jupiter-api:$junitJupiterVersion")
