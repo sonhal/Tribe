@@ -14,12 +14,14 @@ import io.ktor.locations.*
 import io.ktor.sessions.*
 import io.ktor.auth.*
 import com.fasterxml.jackson.databind.*
+import io.github.cdimascio.dotenv.dotenv
 import io.ktor.jackson.*
 import io.ktor.features.*
 import io.ktor.client.*
 
 
 val oauthauthentication = "oauthauthentication"
+val oauthIp = dotenv()["oauthIP"]
 
 fun main(args: Array<String>): Unit = io.ktor.server.cio.EngineMain.main(args)
 
@@ -27,13 +29,8 @@ fun main(args: Array<String>): Unit = io.ktor.server.cio.EngineMain.main(args)
 @kotlin.jvm.JvmOverloads
 fun Application.module(testing: Boolean = false) {
 
-
     install(Mustache) {
         mustacheFactory = DefaultMustacheFactory("templates/mustache")
-    }
-
-    routing {
-        home()
     }
 
     install(Sessions) {
@@ -55,13 +52,20 @@ fun Application.module(testing: Boolean = false) {
             urlProvider = {redirectUrl("/login")}
         }
     }
+
+    install(Routing) {
+        trace { application.log.trace(it.buildText()) }
+        home()
+        login()
+    }
+
 }
 
 data class MustacheUser(val id: Int, val name: String)
 
 data class UserSession(val id: String, val name: String, val token: String )
 
-private fun ApplicationCall.redirectUrl(path: String): String {
+fun ApplicationCall.redirectUrl(path: String): String {
     val defaultPort = if (request.origin.scheme == "http") 80 else 443
     val hostPort = request.host() + request.port().let { port -> if (port == defaultPort) "" else ":$port" }
     val protocol = request.origin.scheme

@@ -6,5 +6,8 @@
 *.ipr
 *.iws
 
+# Environment variables
+.env
+
 # Project exclude paths
 /tribe-web/build/

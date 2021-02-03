@@ -13,4 +13,5 @@ application {
 dependencies {
     implementation("com.zaxxer:HikariCP:3.4.5")
     implementation("org.flywaydb:flyway-core:6.5.0")
+    implementation("com.auth0:java-jwt:3.12.1")
 }

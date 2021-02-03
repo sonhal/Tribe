@@ -1,0 +1,16 @@
+{{<base}}
+    {{$content}}
+
+        <div class="card sm-8 col padding-small">
+            <div class="card-body">
+                <p class="card-title">Your Session</p>
+                <p class="card-text">
+                Session id: {{ session.id }}
+                Session name: {{session.name }}
+                Session JWT: {{session.token}}
+                </p>
+            </div>
+        </div>
+
+    {{/content}}
+{{/base}}
