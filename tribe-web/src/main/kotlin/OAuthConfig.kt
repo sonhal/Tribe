@@ -14,6 +14,7 @@ val loginProvider
         requestMethod = HttpMethod.Post,
         clientId = dotenv["clientId"],
         clientSecret = dotenv["clientSecret"],
-        defaultScopes = listOf("todoAPI.read", "todoAPI.write"),
-        authorizeUrlInterceptor = { this.parameters.append("audience", "http://0.0.0.0:8090/api/todos")}
+        defaultScopes = listOf("openid", "profile", "email", "todoAPI.read", "todoAPI.write"),
+        //authorizeUrlInterceptor = {
+        //    this.parameters.append("audience", "http://0.0.0.0:8090/api/todos")},
 )

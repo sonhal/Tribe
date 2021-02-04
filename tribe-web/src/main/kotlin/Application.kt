@@ -1,33 +1,36 @@
 package no.sonhal
 
 import io.ktor.application.*
-import io.ktor.response.*
 import io.ktor.request.*
 import io.ktor.routing.*
-import io.ktor.http.*
 import com.github.mustachejava.DefaultMustacheFactory
 import io.ktor.mustache.Mustache
-import io.ktor.mustache.MustacheContent
-import io.ktor.content.*
-import io.ktor.http.content.*
-import io.ktor.locations.*
 import io.ktor.sessions.*
 import io.ktor.auth.*
-import com.fasterxml.jackson.databind.*
 import io.github.cdimascio.dotenv.dotenv
-import io.ktor.jackson.*
 import io.ktor.features.*
 import io.ktor.client.*
+import org.slf4j.event.Level
 
 
 val oauthauthentication = "oauthauthentication"
 val oauthIp = dotenv()["oauthIP"]
 
-fun main(args: Array<String>): Unit = io.ktor.server.cio.EngineMain.main(args)
+val datasource = DataSourceBuilder().dataSource
+val personDao = PersonDao(datasource)
+
+fun main(args: Array<String>) {
+    datasource.migrate()
+    io.ktor.server.cio.EngineMain.main(args)
+}
 
 @Suppress("unused") // Referenced in application.conf
 @kotlin.jvm.JvmOverloads
 fun Application.module(testing: Boolean = false) {
+
+    install(CallLogging) {
+        level = Level.INFO
+    }
 
     install(Mustache) {
         mustacheFactory = DefaultMustacheFactory("templates/mustache")
@@ -49,14 +52,17 @@ fun Application.module(testing: Boolean = false) {
                     close()
                 }
             }
+
             urlProvider = {redirectUrl("/login")}
         }
     }
 
     install(Routing) {
-        trace { application.log.trace(it.buildText()) }
+        trace {
+            application.log.trace(it.buildText()) }
         home()
         login()
+        people()
     }
 
 }

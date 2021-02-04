@@ -1,4 +1,5 @@
 create table PERSON (
-    ID int not null,
-    NAME varchar(100) not null
+    ID varchar(100) not null PRIMARY KEY,
+    NAME varchar(100) not null,
+    EMAIL varchar(100) not null
 );

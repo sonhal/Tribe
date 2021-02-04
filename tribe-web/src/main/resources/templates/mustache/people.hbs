@@ -1,0 +1,17 @@
+{{<base}}
+    {{$content}}
+        {{#people}}
+            <div class="card sm-6 col padding-small">
+                <div class="card-body">
+                    <p class="card-text">
+                        {{id}}
+                        {{name}}
+                        {{email}}
+                    </p>
+                </div>
+            </div>
+        {{/people}}
+
+
+    {{/content}}
+{{/base}}

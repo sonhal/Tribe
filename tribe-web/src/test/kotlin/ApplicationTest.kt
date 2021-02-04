@@ -12,7 +12,9 @@ import kotliquery.using
 import org.flywaydb.core.Flyway
 import org.junit.jupiter.api.Test
 import java.nio.file.Files.createTempDirectory
+import java.util.*
 import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
 
 class ApplicationTest {
 
@@ -63,6 +65,13 @@ class ApplicationTest {
         println("Hello")
     }
 
+    @Test
+    fun testPersonDao() {
+        assertNotNull(PersonDao(dataSource)
+            .persistPerson(UUID.randomUUID().toString(), "Sondre", "myemail@email.com"))
+        println("hello")
+    }
+
     fun testQuery() {
         using(sessionOf(dataSource)) {
             it.run(
@@ -74,4 +83,6 @@ class ApplicationTest {
             )
         }
     }
+
+
 }
